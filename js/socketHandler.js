@@ -19,7 +19,8 @@ $(document).ready(function () {
 			$this.data('flag',"1");
 			$this.data('bgcolor', $this.css('background-color')).css('background-color', playerColor);
 			var json = JSON.stringify({gameId:1,name:playerName,cellId:$(this).attr('id'),color:playerColor});
-			conn.send(json);
+			$("#overlay").show();
+    		setTimeout(function(){ $("#overlay").hide(); conn.send(json);}, timeoutDelay);	
 		}
 	});
 });
@@ -31,7 +32,7 @@ conn.onopen = function(e) {
 };
 
 conn.onmessage = function(e) {
-	// console.log(e.data);
+	console.log(e.data);
     var parameters = $.parseJSON(e.data);
     if(parameters.gameBlock == 1){
     	$("#overlay").show();
@@ -48,6 +49,8 @@ conn.onmessage = function(e) {
     	if($this.data("flag") != "1"){
     		$this.data('bgcolor', $this.css('background-color')).css('background-color', parameters.color);
     		$this.data('flag',"1");
+    		$("#overlay").show();
+    		setTimeout(function(){ $("#overlay").hide(); }, timeoutDelay);
 		}		
     }
     

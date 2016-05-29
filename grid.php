@@ -36,5 +36,6 @@ $color = strtolower($_REQUEST["inputColor"]);
 var gameId = 1;
 var playerName = '<?php echo $name; ?>';
 var playerColor = '#<?php echo $color; ?>';
+var timeoutDelay = <?php echo $blockingTime;?>;
 	</script>
 <script type="text/javascript" src="js/socketHandler.js"></script>

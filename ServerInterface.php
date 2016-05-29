@@ -45,11 +45,14 @@ protected $clients;
                     ));
                 $msg = $return;                
             }
-
         } else {
-            $_SESSION["games"][$obj->gameId]["players"][$obj->name] += 1;
+            $_SESSION["games"][$obj->gameId]["players"][$obj->name]["score"] += 1;
             $allPlayers = $_SESSION["games"][$obj->gameId]["players"];
-            if(array_sum($allPlayers) == $boardsize * $boardsize){
+            $sum = 0;
+            foreach($allPlayers as $player){
+                $sum += $player["score"];
+            }
+            if($sum == $boardsize * $boardsize){
                 $winner = array_keys($allPlayers, max($allPlayers));
                 $return = json_encode(array(
                         "winner" => $winner,
