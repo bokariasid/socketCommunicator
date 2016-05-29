@@ -37,6 +37,7 @@ conn.onmessage = function(e) {
     	$("#overlay").show();
     } else {
     	$("#overlay").hide();
+    	// alert("Please start!!");
     }
     if(parameters.gameOver == 1){
     	alert(parameters.winner + "won!!");
