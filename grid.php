@@ -4,19 +4,23 @@ require 'config.php';
 require 'Game.php';
 $name = $_REQUEST["inputName"];
 $color = $_REQUEST["inputColor"];
+$gameObj = new Game();
 if(isset($_REQUEST["startGame"])) {
-	$gameObj = new Game();
+	// $gameObj = new Game();
 	$gameId = $gameObj->createNewGame();
 	if($gameId){
 	 	$_SESSION["games"][$gameId] = array();
 		$_SESSION["games"][$gameId]["players"] = array();
-		$_SESSION["games"][$gameId]["players"][$name] = 0;
+		$_SESSION["games"][$gameId]["players"][$name] = array();
 	}
 
 } elseif(isset($_REQUEST["joinGame"])) {
 	// echo 
 	$gameId = str_replace("Game","",$_REQUEST["joinGame"]);
-	$_SESSION["games"][$gameId]["players"][$name] = 0;
+	if($gameObj->isClosed($gameId)){
+		header("Location: index.php");
+	}
+	$_SESSION["games"][$gameId]["players"][$name] = array();
 }
 $color = strtolower($_REQUEST["inputColor"]);
 ?>	
@@ -43,7 +47,7 @@ $color = strtolower($_REQUEST["inputColor"]);
 </div>
 
 <script type="text/javascript">
-var gameId = 1;
+var gameId = <?php echo $gameId;?>;
 var playerName = '<?php echo $name; ?>';
 var playerColor = '#<?php echo $color; ?>';
 var timeoutDelay = <?php echo $blockingTime;?>;
