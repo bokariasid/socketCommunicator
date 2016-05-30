@@ -27,7 +27,7 @@ protected $db;
         // echo sprintf('Connection %d sending message "%s" to %d other connection%s' . "\n"
             // , $from->resourceId, $msg, $numRecv, $numRecv == 1 ? '' : 's');
         $obj = json_decode($msg);
-        print_r($obj);
+        // print_r($this->clients);
         $gameBlock = false;
         if(@$obj->newConnection == 1){
             $_SESSION["games"][$obj->gameId]["players"][$obj->name] = array();
@@ -37,7 +37,8 @@ protected $db;
             if($numPlayerCount < 2){
                 $return = json_encode(array(
                         "gameBlock" => 1,
-                        "numPlayer" => $numPlayerCount
+                        "numPlayer" => $numPlayerCount,
+                        "gameId" => $obj->gameId,
                     ));
                 $msg = $return;
                 $gameBlock = true;
@@ -46,12 +47,12 @@ protected $db;
                 $return = json_encode(array(
                         "gameBlock" => 0,
                         "numPlayer" => $numPlayerCount,
-                        "currentGrid" => $_SESSION["games"][$obj->gameId]["gridStatus"],
+                        "gameId" => $obj->gameId,
                     ));
                 $msg = $return;                
             }
         } else {
-            $_SESSION["games"][$obj->gameId]["gridStatus"][$obj->color][] = $obj->cellId;
+            
             $_SESSION["games"][$obj->gameId]["players"][$obj->name]["score"] += 1;
             $allPlayers = $_SESSION["games"][$obj->gameId]["players"];
             $sum = 0;
@@ -62,12 +63,18 @@ protected $db;
                 $winner = array_keys($allPlayers, max($allPlayers));
                 $return = json_encode(array(
                         "winner" => $winner,
-                        "gameOver" => 1
+                        "gameOver" => 1,
+                        "gameId" => $obj->gameId,
                     ));
                 $gameObj = new Game();
                 $gameObj->closeGame($obj->gameId);
                 $msg = $return;
             }
+            
+        }
+        foreach ($_SESSION["games"][$obj->gameId]["players"] as $playerName => $playerData) {
+            # code...
+            $scoreCard[$playerName] = $playerData["score"];
         }
         foreach ($this->clients as $client) {
             if ($from !== $client && $gameBlock) {
@@ -97,7 +104,8 @@ protected $db;
             if($numPlayerCount < 2){                
                 $return = json_encode(array(
                         "gameBlock" => 1,
-                        "numPlayer" => $numPlayerCount
+                        "numPlayer" => $numPlayerCount,
+                        "gameId" => $gameId,
                     ));
                 $msg = $return;
                 $gameBlock = true;
@@ -105,20 +113,20 @@ protected $db;
                 $gameBlock = false;
                 $return = json_encode(array(
                         "gameBlock" => 0,
-                        "numPlayer" => $numPlayerCount
+                        "numPlayer" => $numPlayerCount,
+                        "gameId" => $gameId,
                     ));
                 $msg = $return;                
             }
-            foreach ($this->clients as $client) {
+        foreach ($this->clients as $client) {
             if ($conn !== $client && $gameBlock) {
                 // The sender is not the receiver, send to each client connected
                 $client->send($msg);
             } else {
                 $client->send($msg);
             }
-
+        }
     }
-}
 
     public function onError(ConnectionInterface $conn, \Exception $e) {
         echo "An error has occurred: {$e->getMessage()}\n";
