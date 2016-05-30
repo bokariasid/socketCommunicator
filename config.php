@@ -1,4 +1,5 @@
 <?php
+namespace FinomenaTest;
 require 'database.php';
 $boardsize = 2;
 $players= 2;

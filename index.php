@@ -1,10 +1,9 @@
 <?php
-session_start();
+namespace FinomenaTest;
 require 'config.php';
-include_once 'Game.php';
+require 'Game.php';
 $gameObj = new Game();
 $games = $gameObj->getGames();
-// print_r(($games));exit;
 function random_color_part() {
     return str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT);
 }
@@ -31,7 +30,7 @@ function random_color() {
         <?php 
         if(count($games) > 0){ 
             foreach ($games as $game) { ?>
-        <input class="btn btn-lg btn-primary btn-block" type="submit" id="joinGame" name="joinGame" value="<?php echo $game['id']?>">            
+        <input class="btn btn-lg btn-primary btn-block" type="submit" id="joinGame" name="joinGame" value="Game<?php echo $game['id']?>">            
         <?php }
     } ?>        
         <input class="btn btn-lg btn-primary btn-block" type="submit" id="startGame" name="startGame" value="startGame">

@@ -1,13 +1,22 @@
 <?php
+namespace FinomenaTest;
 require 'config.php';
+require 'Game.php';
 $name = $_REQUEST["inputName"];
 $color = $_REQUEST["inputColor"];
 if(isset($_REQUEST["startGame"])) {
-	$_SESSION["games"][1] = array();
-	$_SESSION["games"][1]["players"] = array();
-	$_SESSION["games"][1]["players"][$name] = 0;
-} else {
+	$gameObj = new Game();
+	$gameId = $gameObj->createNewGame();
+	if($gameId){
+	 	$_SESSION["games"][$gameId] = array();
+		$_SESSION["games"][$gameId]["players"] = array();
+		$_SESSION["games"][$gameId]["players"][$name] = 0;
+	}
+
+} elseif(isset($_REQUEST["joinGame"])) {
 	// echo 
+	$gameId = str_replace("Game","",$_REQUEST["joinGame"]);
+	$_SESSION["games"][$gameId]["players"][$name] = 0;
 }
 $color = strtolower($_REQUEST["inputColor"]);
 ?>	
@@ -17,6 +26,7 @@ $color = strtolower($_REQUEST["inputColor"]);
 
 <div id="container">
 <div id="overlay"></div>
+<h4> Please do not refresh or you will lose your progress!!</h4>
 <table class="grid">
     <?php $numSquare = $boardsize;
 

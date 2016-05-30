@@ -1,13 +1,15 @@
 <?php
 namespace FinomenaTest;
 include_once "config.php";
+// include_once "database.php";
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 include_once 'vendor/autoload.php';
+require 'Game.php';
 
 class ServerInterface implements MessageComponentInterface {
 protected $clients;
-
+protected $db;
     public function __construct() {
         $this->clients = new \SplObjectStorage;
     }
@@ -15,7 +17,7 @@ protected $clients;
     public function onOpen(ConnectionInterface $conn) {
         // Store the new connection to send messages to later
         $this->clients->attach($conn);
-
+        // $this->db = new DatabaseHandler();
         echo "New connection! ({$conn->resourceId})\n";
     }
 
@@ -58,6 +60,8 @@ protected $clients;
                         "winner" => $winner,
                         "gameOver" => 1
                     ));
+                $gameObj = new Game();
+                $gameObj->closeGame($obj->gameId);
                 $msg = $return;
             }
         }

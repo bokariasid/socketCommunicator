@@ -41,7 +41,7 @@ conn.onmessage = function(e) {
     	// alert("Please start!!");
     }
     if(parameters.gameOver == 1){
-    	alert(parameters.winner + "won!!");
+    	alert(parameters.winner + " won!!");
     	window.location("index.php");
     }
     if(parameters.cellId){
