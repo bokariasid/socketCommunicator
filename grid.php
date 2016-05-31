@@ -31,6 +31,11 @@ $color = strtolower($_REQUEST["inputColor"]);
 <div id="container">
 <div id="overlay"></div>
 <h4> Please do not refresh or you will lose your progress!!</h4>
+<div class="row">
+<h5>Score card</h5>
+<div id="scoreCard">
+</div>
+<div>
 <table class="grid">
     <?php $numSquare = $boardsize;
 
@@ -44,6 +49,7 @@ $color = strtolower($_REQUEST["inputColor"]);
     	<?php }
     ?>
     </table>
+    </div>
 </div>
 
 <script type="text/javascript">

@@ -32,15 +32,18 @@ conn.onopen = function(e) {
 };
 
 conn.onmessage = function(e) {
-	console.log(e.data);
     var parameters = $.parseJSON(e.data);
-    // console.log(parameters);
     if(parameters.gameId == gameId){
+    	if(parameters.scoreCard){
+    		$("#scoreCard").text("");
+    		$(parameters.scoreCard).each(function( index ) {
+    			$("#scoreCard").append("<div>"+$(this)[0]+":"+(this)[1]+"</div>");
+			});
+    	}
 	    if(parameters.gameBlock == 1){
 	    	$("#overlay").show();
 	    } else {
 	    	$("#overlay").hide();
-	    	// alert("Please start!!");
 	    }
 	    if(parameters.gameOver == 1){
 	    	alert(parameters.winner + " won!!");

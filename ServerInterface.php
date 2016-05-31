@@ -28,6 +28,17 @@ protected $db;
             // , $from->resourceId, $msg, $numRecv, $numRecv == 1 ? '' : 's');
         $obj = json_decode($msg);
         // print_r($this->clients);
+        foreach ($_SESSION["games"][$obj->gameId]["players"] as $playerName => $playerData) {
+            # code...
+            $scoreCard[] = array($playerName,$playerData["score"]);
+        }
+        $msgToReturn = json_encode(array(
+                "gameId" => $obj->gameId,
+                "name" => $obj->name,
+                "cellId" => $obj->cellId,
+                "color" => $obj->color,
+                "scoreCard" => $scoreCard,
+            ));
         $gameBlock = false;
         if(@$obj->newConnection == 1){
             $_SESSION["games"][$obj->gameId]["players"][$obj->name] = array();
@@ -40,7 +51,7 @@ protected $db;
                         "numPlayer" => $numPlayerCount,
                         "gameId" => $obj->gameId,
                     ));
-                $msg = $return;
+                $msgToReturn = $return;
                 $gameBlock = true;
             } else {
                 $gameBlock = false;
@@ -49,7 +60,7 @@ protected $db;
                         "numPlayer" => $numPlayerCount,
                         "gameId" => $obj->gameId,
                     ));
-                $msg = $return;                
+                $msgToReturn = $return;                
             }
         } else {
             
@@ -68,20 +79,16 @@ protected $db;
                     ));
                 $gameObj = new Game();
                 $gameObj->closeGame($obj->gameId);
-                $msg = $return;
+                $msgToReturn = $return;
             }
             
-        }
-        foreach ($_SESSION["games"][$obj->gameId]["players"] as $playerName => $playerData) {
-            # code...
-            $scoreCard[$playerName] = $playerData["score"];
         }
         foreach ($this->clients as $client) {
             if ($from !== $client && $gameBlock) {
                 // The sender is not the receiver, send to each client connected
-                $client->send($msg);
+                $client->send($msgToReturn);
             } else {
-                $client->send($msg);
+                $client->send($msgToReturn);
             }
         }
     }
