@@ -1,7 +1,6 @@
 <?php
 namespace FinomenaTest;
 include_once "config.php";
-// include_once "database.php";
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 include_once 'vendor/autoload.php';
@@ -28,8 +27,10 @@ protected $db;
             // , $from->resourceId, $msg, $numRecv, $numRecv == 1 ? '' : 's');
         $obj = json_decode($msg);
         // print_r($this->clients);
+        if(isset($obj->cellId) && isset($obj->color)){
+            $_SESSION["games"][$obj->gameId]["grid"][] = array($obj->cellId,$obj->color);
+        }
         foreach ($_SESSION["games"][$obj->gameId]["players"] as $playerName => $playerData) {
-            # code...
             $scoreCard[] = array($playerName,$playerData["score"]);
         }
         $msgToReturn = json_encode(array(
@@ -50,6 +51,8 @@ protected $db;
                         "gameBlock" => 1,
                         "numPlayer" => $numPlayerCount,
                         "gameId" => $obj->gameId,
+                        "grid" => $_SESSION["games"][$obj->gameId]["grid"],
+                        "scoreCard" => $scoreCard,
                     ));
                 $msgToReturn = $return;
                 $gameBlock = true;
@@ -59,11 +62,12 @@ protected $db;
                         "gameBlock" => 0,
                         "numPlayer" => $numPlayerCount,
                         "gameId" => $obj->gameId,
+                        "grid" => $_SESSION["games"][$obj->gameId]["grid"],
+                        "scoreCard" => $scoreCard,
                     ));
                 $msgToReturn = $return;                
             }
         } else {
-            
             $_SESSION["games"][$obj->gameId]["players"][$obj->name]["score"] += 1;
             $allPlayers = $_SESSION["games"][$obj->gameId]["players"];
             $sum = 0;
@@ -76,6 +80,7 @@ protected $db;
                         "winner" => $winner,
                         "gameOver" => 1,
                         "gameId" => $obj->gameId,
+                        "scoreCard" => $scoreCard,
                     ));
                 $gameObj = new Game();
                 $gameObj->closeGame($obj->gameId);
@@ -113,6 +118,7 @@ protected $db;
                         "gameBlock" => 1,
                         "numPlayer" => $numPlayerCount,
                         "gameId" => $gameId,
+                        "scoreCard" => $scoreCard,
                     ));
                 $msg = $return;
                 $gameBlock = true;
@@ -122,6 +128,7 @@ protected $db;
                         "gameBlock" => 0,
                         "numPlayer" => $numPlayerCount,
                         "gameId" => $gameId,
+                        "scoreCard" => $scoreCard,
                     ));
                 $msg = $return;                
             }

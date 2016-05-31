@@ -34,6 +34,17 @@ conn.onopen = function(e) {
 conn.onmessage = function(e) {
     var parameters = $.parseJSON(e.data);
     if(parameters.gameId == gameId){
+    	if(parameters.grid){
+    		$(parameters.grid).each(function( index ) {
+		    	var $this = $('#'+$(this)[0]);
+		    	if($this.data("flag") != "1"){
+		    		$this.data('bgcolor', $this.css('background-color')).css('background-color', $(this)[1]);
+		    		$this.data('flag',"1");
+		    		$("#overlay").show();
+		    		setTimeout(function(){ $("#overlay").hide(); }, timeoutDelay);
+				}
+			});
+    	}
     	if(parameters.scoreCard){
     		$("#scoreCard").text("");
     		$(parameters.scoreCard).each(function( index ) {
